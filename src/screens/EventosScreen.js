@@ -1,4 +1,3 @@
-// File: src/screens/EventosScreen.js
 import React, { useEffect, useState } from "react";
 import {
 	View,
@@ -33,9 +32,9 @@ const EventosScreen = () => {
 		setError(null);
 		try {
 			const response = await axios.get("/evento/mostrarPaginas", {
-				params: { page: pagina, limit: 3 },
+				params: { page: pagina, limit: 4 },
 			});
-			console.log("Eventos paginados:", response.data); // Aquí se asegura de ver los datos
+			console.log("Eventos paginados:", response.data);
 			const eventosProcesados = response.data.eventos.map((evento) => ({
 				...evento,
 				imagenes: evento.imagenes
@@ -64,7 +63,7 @@ const EventosScreen = () => {
 			const response = await axios.get(`/evento-buscar`, {
 				params: { tipo, titulo: busqueda },
 			});
-			console.log("Eventos buscados:", response.data.eventos); // Aquí se asegura de ver los datos
+			console.log("Eventos buscados:", response.data.eventos);
 			const eventosFiltrados = response.data.eventos.map((evento) => ({
 				...evento,
 				imagenes: evento.imagenes
@@ -76,7 +75,7 @@ const EventosScreen = () => {
 			setModoBusqueda(true);
 		} catch (err) {
 			setEventos([]);
-			setError("No se encontraron eventoss.");
+			setError("No se encontraron eventos.");
 		} finally {
 			setLoading(false);
 		}
@@ -145,17 +144,20 @@ const EventosScreen = () => {
 					data={eventos}
 					renderItem={renderItem}
 					keyExtractor={(item) => item.id_evento.toString()}
+					keyboardShouldPersistTaps="handled" // Evitar el cierre del teclado
 				/>
 			)}
 
-			{!modoBusqueda && (
+			{/* Paginación siempre visible */}
+			{(eventos.length > 0 || modoBusqueda) && (
 				<View style={styles.pagination}>
 					<Button
 						title="← Anterior"
 						onPress={() => setPagina((prev) => Math.max(prev - 1, 1))}
 						disabled={pagina <= 1}
+						color="#007BFF" // Estilo de color del botón
 					/>
-					<Text style={{ marginHorizontal: 10 }}>
+					<Text style={styles.pageText}>
 						Página {pagina} de {totalPaginas}
 					</Text>
 					<Button
@@ -164,6 +166,7 @@ const EventosScreen = () => {
 							setPagina((prev) => Math.min(prev + 1, totalPaginas))
 						}
 						disabled={pagina >= totalPaginas}
+						color="#007BFF" // Estilo de color del botón
 					/>
 				</View>
 			)}
@@ -200,6 +203,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: 10,
+		paddingBottom: 40, // Asegura que la paginación no se mezcle con el contenido
+	},
+	pageText: {
+		fontSize: 16,
+		color: "#333",
+		marginHorizontal: 10,
 	},
 });
 
