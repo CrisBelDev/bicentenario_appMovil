@@ -92,9 +92,7 @@ const EventosScreen = () => {
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			style={styles.card}
-			onPress={() =>
-				navigation.navigate("EventoDetalle", { id: item.id_evento })
-			}
+			onPress={() => navigation.navigate("EventoInfo", { id: item.id_evento })}
 		>
 			<Image
 				source={{
@@ -144,32 +142,34 @@ const EventosScreen = () => {
 					data={eventos}
 					renderItem={renderItem}
 					keyExtractor={(item) => item.id_evento.toString()}
-					keyboardShouldPersistTaps="handled" // Evitar el cierre del teclado
+					keyboardShouldPersistTaps="handled"
+					ListFooterComponent={
+						!loading && (eventos.length > 0 || modoBusqueda) ? (
+							<View style={styles.pagination}>
+								<Button
+									title="← Anterior"
+									onPress={() => setPagina((prev) => Math.max(prev - 1, 1))}
+									disabled={pagina <= 1}
+									color="#007BFF"
+								/>
+								<Text style={styles.pageText}>
+									Página {pagina} de {totalPaginas}
+								</Text>
+								<Button
+									title="Siguiente →"
+									onPress={() =>
+										setPagina((prev) => Math.min(prev + 1, totalPaginas))
+									}
+									disabled={pagina >= totalPaginas}
+									color="#007BFF"
+								/>
+							</View>
+						) : null
+					}
 				/>
 			)}
 
 			{/* Paginación siempre visible */}
-			{(eventos.length > 0 || modoBusqueda) && (
-				<View style={styles.pagination}>
-					<Button
-						title="← Anterior"
-						onPress={() => setPagina((prev) => Math.max(prev - 1, 1))}
-						disabled={pagina <= 1}
-						color="#007BFF" // Estilo de color del botón
-					/>
-					<Text style={styles.pageText}>
-						Página {pagina} de {totalPaginas}
-					</Text>
-					<Button
-						title="Siguiente →"
-						onPress={() =>
-							setPagina((prev) => Math.min(prev + 1, totalPaginas))
-						}
-						disabled={pagina >= totalPaginas}
-						color="#007BFF" // Estilo de color del botón
-					/>
-				</View>
-			)}
 		</View>
 	);
 };
