@@ -4,7 +4,7 @@ import React, { createContext, useState } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null); // Guarda {token, nombre, rol, etc.}
+	const [user, setUser] = useState(null); // Guarda la información del usuario (token, nombre, etc.)
 
 	return (
 		<AuthContext.Provider value={{ user, setUser }}>
