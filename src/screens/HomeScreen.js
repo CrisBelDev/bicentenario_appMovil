@@ -23,7 +23,7 @@ export default function HomeScreen() {
 				const response = await axios.get("/evento/mostrarPaginas", {
 					params: { page: pagina, limit: 6 },
 				});
-				console.log("Eventos:", response.data.eventos);
+				//console.log("Eventos:", response.data.eventos);
 				const eventosProcesados = response.data.eventos.map((evento) => ({
 					...evento,
 					imagenes: evento.imagenes

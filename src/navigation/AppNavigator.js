@@ -3,9 +3,12 @@ import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
-import LogoutScreen from "../screens/LogoutScreen"; // Importa el componente de logout
+import EventosScreen from "../screens/EventosScreen"; // ← Importa EventosScreen
+import LogoutScreen from "../screens/LogoutScreen";
+
 import { AuthContext } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +20,8 @@ export default function AppNavigator() {
 	const AuthenticatedNavigator = () => (
 		<Drawer.Navigator initialRouteName="Home">
 			<Drawer.Screen name="Home" component={HomeScreen} />
+			<Drawer.Screen name="Eventos" component={EventosScreen} />
+			{/* ← Añadido */}
 			<Drawer.Screen
 				name="Cerrar Sesión"
 				component={LogoutScreen}
