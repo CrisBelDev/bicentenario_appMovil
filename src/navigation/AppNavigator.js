@@ -68,7 +68,7 @@ const AuthenticatedNavigator = () => (
 	</Stack.Navigator>
 );
 
-// Usuarios no autenticados
+// Usuarios no autenticados.
 const UnauthenticatedNavigator = () => (
 	<Stack.Navigator initialRouteName="Login">
 		<Stack.Screen
