@@ -50,7 +50,7 @@ const NotificacionesScreen = () => {
 				setNotificaciones((prev) =>
 					prev.map((n) => (n.id === id ? { ...n, leido: true } : n))
 				);
-				navigation.navigate("EventoInfo", { id: id_evento });
+				navigation.replace("EventoInfo", { id: id_evento });
 			} catch (error) {
 				console.error("Error al marcar como leída:", error);
 			}

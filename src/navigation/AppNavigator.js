@@ -1,4 +1,3 @@
-// src/navigation/AppNavigator.js
 import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,11 +7,11 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import EventosScreen from "../screens/EventosScreen";
 import EventoInfoScreen from "../screens/EventoInfoScreen";
-import NotificacionesScreen from "../screens/NotificacionesScreen"; // ← NUEVO
+import NotificacionesScreen from "../screens/NotificacionesScreen";
 import LogoutScreen from "../screens/LogoutScreen";
 
 import { AuthContext } from "../context/AuthContext";
-import NotificationBell from "../components/NotificationBell"; // ← NUEVO
+import NotificationBell from "../components/NotificationBell";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -20,8 +19,22 @@ const Drawer = createDrawerNavigator();
 // Menú lateral
 const DrawerNavigator = () => (
 	<Drawer.Navigator initialRouteName="Home">
-		<Drawer.Screen name="Home" component={HomeScreen} />
-		<Drawer.Screen name="Eventos" component={EventosScreen} />
+		<Drawer.Screen
+			name="Home"
+			component={HomeScreen}
+			options={{
+				title: "Inicio",
+				headerRight: () => <NotificationBell />,
+			}}
+		/>
+		<Drawer.Screen
+			name="Eventos"
+			component={EventosScreen}
+			options={{
+				title: "Eventos",
+				headerRight: () => <NotificationBell />,
+			}}
+		/>
 		<Drawer.Screen
 			name="Cerrar Sesión"
 			component={LogoutScreen}
@@ -36,17 +49,16 @@ const AuthenticatedNavigator = () => (
 		<Stack.Screen
 			name="Main"
 			component={DrawerNavigator}
-			options={{
-				headerShown: true,
-				title: "Inicio",
-				headerRight: () => <NotificationBell />, // ← Campana
-			}}
+			options={{ headerShown: false }}
 		/>
 		<Stack.Screen
 			name="EventoInfo"
 			component={EventoInfoScreen}
-			options={{ title: "Detalle del Evento" }}
+			options={{
+				title: "Detalle del Evento",
+			}}
 		/>
+
 		<Stack.Screen
 			name="Notificaciones"
 			component={NotificacionesScreen}
@@ -58,7 +70,11 @@ const AuthenticatedNavigator = () => (
 // Usuarios no autenticados
 const UnauthenticatedNavigator = () => (
 	<Stack.Navigator initialRouteName="Login">
-		<Stack.Screen name="Login" component={LoginScreen} />
+		<Stack.Screen
+			name="Login"
+			component={LoginScreen}
+			options={{ headerShown: false }}
+		/>
 	</Stack.Navigator>
 );
 
