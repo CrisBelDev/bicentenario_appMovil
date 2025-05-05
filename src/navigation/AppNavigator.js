@@ -1,3 +1,4 @@
+// src/navigation/AppNavigator.js
 import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -9,6 +10,7 @@ import EventosScreen from "../screens/EventosScreen";
 import EventoInfoScreen from "../screens/EventoInfoScreen";
 import NotificacionesScreen from "../screens/NotificacionesScreen";
 import LogoutScreen from "../screens/LogoutScreen";
+import RegistroScreen from "../screens/RegistroScreen"; // Importar RegistroScreen
 
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell";
@@ -58,7 +60,6 @@ const AuthenticatedNavigator = () => (
 				title: "Detalle del Evento",
 			}}
 		/>
-
 		<Stack.Screen
 			name="Notificaciones"
 			component={NotificacionesScreen}
@@ -74,6 +75,11 @@ const UnauthenticatedNavigator = () => (
 			name="Login"
 			component={LoginScreen}
 			options={{ headerShown: false }}
+		/>
+		<Stack.Screen
+			name="Registro"
+			component={RegistroScreen} // Nueva pantalla de registro
+			options={{ title: "Registro de Usuario" }}
 		/>
 	</Stack.Navigator>
 );

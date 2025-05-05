@@ -1,3 +1,4 @@
+// src/screens/LoginScreen.js
 import React, { useState, useContext } from "react";
 import {
 	View,
@@ -10,6 +11,7 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import { login } from "../api/auth";
+import { useNavigation } from "@react-navigation/native"; // Importa useNavigation
 import { AuthContext } from "../context/AuthContext";
 
 export default function LoginScreen() {
@@ -18,6 +20,8 @@ export default function LoginScreen() {
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const { setUser } = useContext(AuthContext);
+
+	const navigation = useNavigation(); // Usar useNavigation para acceder a la navegación
 
 	// Validación simple de los campos
 	const isValidForm = () => {
@@ -87,7 +91,7 @@ export default function LoginScreen() {
 				<Text style={styles.registerText}>¿No tienes una cuenta?</Text>
 				<TouchableOpacity
 					onPress={() => {
-						/* Navegar a la pantalla de registro */
+						navigation.navigate("Registro"); // Aquí usas navigation
 					}}
 				>
 					<Text style={styles.registerLink}>Regístrate aquí</Text>
