@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Configura axios
 const api = axios.create({
-	baseURL: "http://192.168.0.5:5000", // Usa http en lugar de https
+	baseURL: "http://192.168.17.2:5000", // Usa http en lugar de https
 	headers: {
 		"Content-Type": "application/json",
 	},

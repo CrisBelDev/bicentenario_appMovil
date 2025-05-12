@@ -25,7 +25,7 @@ const NotificationBell = () => {
 
 	useEffect(() => {
 		fetchNotificaciones(); // Llamada inicial
-		const interval = setInterval(fetchNotificaciones, 30000); // Cada 30s
+		const interval = setInterval(fetchNotificaciones, 5000); // Cada 10s
 		return () => clearInterval(interval);
 	}, [userId]);
 

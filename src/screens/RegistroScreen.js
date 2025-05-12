@@ -95,7 +95,7 @@ export default function RegistroScreen() {
 		}
 		setLoading(true);
 		try {
-			await api.post("/usuarios", usuario); // Ajusta la ruta según tu backend
+			await api.post("/usuariosinconfirmacion", usuario); // Ajusta la ruta según tu backend
 			Alert.alert("Éxito", "Registro exitoso");
 			navigation.navigate("Login"); // Navega al login después de un registro exitoso
 		} catch (error) {
