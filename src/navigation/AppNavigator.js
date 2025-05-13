@@ -10,7 +10,7 @@ import EventosScreen from "../screens/EventosScreen";
 import EventoInfoScreen from "../screens/EventoInfoScreen";
 import NotificacionesScreen from "../screens/NotificacionesScreen";
 import LogoutScreen from "../screens/LogoutScreen";
-import RegistroScreen from "../screens/RegistroScreen"; // Importar RegistroScreen
+import RegistroScreen from "../screens/RegistroScreen";
 
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell";
@@ -37,6 +37,7 @@ const DrawerNavigator = () => (
 				headerRight: () => <NotificationBell />,
 			}}
 		/>
+
 		<Drawer.Screen
 			name="Cerrar Sesión"
 			component={LogoutScreen}
@@ -68,7 +69,7 @@ const AuthenticatedNavigator = () => (
 	</Stack.Navigator>
 );
 
-// Usuarios no autenticados.
+// Usuarios no autenticados
 const UnauthenticatedNavigator = () => (
 	<Stack.Navigator initialRouteName="Login">
 		<Stack.Screen
@@ -78,7 +79,7 @@ const UnauthenticatedNavigator = () => (
 		/>
 		<Stack.Screen
 			name="Registro"
-			component={RegistroScreen} // Nueva pantalla de registro
+			component={RegistroScreen}
 			options={{ title: "Registro de Usuario" }}
 		/>
 	</Stack.Navigator>

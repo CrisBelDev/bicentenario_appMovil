@@ -1,3 +1,4 @@
+// src/screens/EventoInfoScreen.js
 import React, { useEffect, useState } from "react";
 import {
 	View,
@@ -14,6 +15,8 @@ import { useRoute } from "@react-navigation/native";
 import RenderHtml from "react-native-render-html";
 import { useWindowDimensions } from "react-native";
 import QRCode from "react-native-qrcode-svg"; // 👈 AÑADIDO
+// En EventoInfoScreen.js
+import { useAuth } from "../context/AuthContext.js"; // Ajusta la ruta si es diferente
 
 const EventoInfoScreen = () => {
 	const route = useRoute();
@@ -26,8 +29,9 @@ const EventoInfoScreen = () => {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	// 👇 Simulamos ID del usuario (reemplaza esto por el ID real desde el contexto o auth)
-	const usuarioId = "123";
 
+	const { user } = useAuth(); // ✅ Usuario real
+	console.log("Usuario:", user); // Verifica el usuario
 	const parseArray = (data) => {
 		try {
 			return Array.isArray(JSON.parse(data)) ? JSON.parse(data) : [];
@@ -155,7 +159,9 @@ const EventoInfoScreen = () => {
 	// Datos para el QR de asistencia
 	const qrData = JSON.stringify({
 		eventoId: id,
-		usuarioId: usuarioId,
+		usuarioId: user?.idUsuario,
+		nombre: user?.nombre,
+		apellido: user?.apellido,
 		timestamp: new Date().toISOString(),
 	});
 
