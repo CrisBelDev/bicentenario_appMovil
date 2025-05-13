@@ -13,6 +13,7 @@ import axios from "../services/api.js";
 import { useRoute } from "@react-navigation/native";
 import RenderHtml from "react-native-render-html";
 import { useWindowDimensions } from "react-native";
+import QRCode from "react-native-qrcode-svg"; // 👈 AÑADIDO
 
 const EventoInfoScreen = () => {
 	const route = useRoute();
@@ -22,7 +23,10 @@ const EventoInfoScreen = () => {
 	const [evento, setEvento] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
-	const [modalVisible, setModalVisible] = useState(false); // 👈 Nuevo estado
+	const [modalVisible, setModalVisible] = useState(false);
+
+	// 👇 Simulamos ID del usuario (reemplaza esto por el ID real desde el contexto o auth)
+	const usuarioId = "123";
 
 	const parseArray = (data) => {
 		try {
@@ -148,11 +152,17 @@ const EventoInfoScreen = () => {
 		return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
 	if (error) return <Text style={styles.error}>{error}</Text>;
 
+	// Datos para el QR de asistencia
+	const qrData = JSON.stringify({
+		eventoId: id,
+		usuarioId: usuarioId,
+		timestamp: new Date().toISOString(),
+	});
+
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<Text style={styles.title}>{evento.titulo}</Text>
 
-			{/* Imagen pequeña que abre el modal */}
 			<Pressable onPress={() => setModalVisible(true)}>
 				<Image
 					source={{ uri: evento.imagen || "https://via.placeholder.com/300" }}
@@ -161,7 +171,6 @@ const EventoInfoScreen = () => {
 				/>
 			</Pressable>
 
-			{/* Modal de imagen en grande */}
 			<Modal visible={modalVisible} transparent={true}>
 				<View style={styles.modalBackground}>
 					<Pressable
@@ -218,6 +227,12 @@ const EventoInfoScreen = () => {
 					/>
 				</>
 			) : null}
+
+			{/* 👉 QR de asistencia */}
+			<Text style={styles.label}>🎟️ Tu código QR de asistencia:</Text>
+			<View style={{ alignItems: "center", marginVertical: 20 }}>
+				<QRCode value={qrData} size={200} />
+			</View>
 		</ScrollView>
 	);
 };
