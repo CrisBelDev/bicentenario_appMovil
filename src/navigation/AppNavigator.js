@@ -11,6 +11,7 @@ import EventoInfoScreen from "../screens/EventoInfoScreen";
 import NotificacionesScreen from "../screens/NotificacionesScreen";
 import LogoutScreen from "../screens/LogoutScreen";
 import RegistroScreen from "../screens/RegistroScreen";
+import RegistroQrScreen from "../screens/RegistroQrScreen";
 
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell";
@@ -42,6 +43,15 @@ const DrawerNavigator = () => (
 			name="Cerrar Sesión"
 			component={LogoutScreen}
 			options={{ headerShown: false }}
+		/>
+
+		<Drawer.Screen
+			name="Escanear QR"
+			//component={LogoutScreen}
+			component={RegistroQrScreen}
+			options={{
+				title: "Escanear QR",
+			}}
 		/>
 	</Drawer.Navigator>
 );

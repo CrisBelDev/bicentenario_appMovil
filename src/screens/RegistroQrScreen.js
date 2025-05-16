@@ -1,63 +1,90 @@
-"use strict";
-
-import React, { Component } from "react";
-
+import React, { useState } from "react";
 import {
-	AppRegistry,
-	StyleSheet,
+	View,
 	Text,
+	StyleSheet,
+	Button,
 	TouchableOpacity,
-	Linking,
+	Alert,
 } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useScanBarcodes, BarcodeFormat } from "expo-barcode-scanner";
 
-import QRCodeScanner from "react-native-qrcode-scanner";
+export default function RegistroQrScreen() {
+	const [permission, requestPermission] = useCameraPermissions();
+	const [facing, setFacing] = useState("back");
+	const [scanned, setScanned] = useState(false);
 
-class ScanScreen extends Component {
-	onSuccess(e) {
-		Linking.openURL(e.data).catch((err) =>
-			console.error("An error occured", err)
-		);
+	// Hook para escanear códigos
+	const [barcodes, setBarcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
+		checkInverted: true,
+	});
+
+	React.useEffect(() => {
+		if (barcodes.length > 0 && !scanned) {
+			setScanned(true);
+			Alert.alert("QR Detectado", `Contenido: ${barcodes[0].data}`, [
+				{ text: "Ok", onPress: () => setScanned(false) },
+			]);
+		}
+	}, [barcodes]);
+
+	if (!permission) {
+		return <View />;
 	}
 
-	render() {
+	if (!permission.granted) {
 		return (
-			<QRCodeScanner
-				onRead={this.onSuccess.bind(this)}
-				topContent={
-					<Text style={styles.centerText}>
-						Go to{" "}
-						<Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-						your computer and scan the QR code.
-					</Text>
-				}
-				bottomContent={
-					<TouchableOpacity style={styles.buttonTouchable}>
-						<Text style={styles.buttonText}>OK. Got it!</Text>
-					</TouchableOpacity>
-				}
-			/>
+			<View style={styles.container}>
+				<Text style={styles.message}>
+					Necesitamos permiso para usar la cámara
+				</Text>
+				<Button title="Permitir cámara" onPress={requestPermission} />
+			</View>
 		);
 	}
+
+	const toggleCameraFacing = () => {
+		setFacing((current) => (current === "back" ? "front" : "back"));
+	};
+
+	return (
+		<View style={styles.container}>
+			<CameraView
+				style={styles.camera}
+				facing={facing}
+				onBarCodeScanned={null} // No usar acá
+				barCodeScannerSettings={{
+					barCodeTypes: ["qr"], // No es obligatorio, pero puedes dejarlo
+				}}
+			/>
+			<View style={styles.buttonContainer}>
+				<TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+					<Text style={styles.text}>Cambiar cámara</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-	centerText: {
-		flex: 1,
+	container: { flex: 1, justifyContent: "center" },
+	message: { textAlign: "center", paddingBottom: 10 },
+	camera: { flex: 1 },
+	buttonContainer: {
+		position: "absolute",
+		bottom: 20,
+		alignSelf: "center",
+		flexDirection: "row",
+	},
+	button: {
+		backgroundColor: "#00000080",
+		padding: 10,
+		borderRadius: 8,
+	},
+	text: {
 		fontSize: 18,
-		padding: 32,
-		color: "#777",
-	},
-	textBold: {
-		fontWeight: "500",
-		color: "#000",
-	},
-	buttonText: {
-		fontSize: 21,
-		color: "rgb(0,122,255)",
-	},
-	buttonTouchable: {
-		padding: 16,
+		color: "white",
+		fontWeight: "bold",
 	},
 });
-
-AppRegistry.registerComponent("default", () => ScanScreen);
