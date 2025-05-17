@@ -1,90 +1,99 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import {
-	View,
-	Text,
+	AppState,
+	Platform,
+	SafeAreaView,
+	StatusBar,
 	StyleSheet,
+	Text,
+	View,
 	Button,
-	TouchableOpacity,
 	Alert,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { useScanBarcodes, BarcodeFormat } from "expo-barcode-scanner";
 
-export default function RegistroQrScreen() {
+export default function QrScanner() {
 	const [permission, requestPermission] = useCameraPermissions();
-	const [facing, setFacing] = useState("back");
-	const [scanned, setScanned] = useState(false);
+	const qrLock = useRef(false);
+	const appState = useRef(AppState.currentState);
 
-	// Hook para escanear códigos
-	const [barcodes, setBarcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
-		checkInverted: true,
-	});
+	useEffect(() => {
+		const subscription = AppState.addEventListener("change", (nextAppState) => {
+			if (
+				appState.current.match(/inactive|background/) &&
+				nextAppState === "active"
+			) {
+				qrLock.current = false;
+			}
+			appState.current = nextAppState;
+		});
 
-	React.useEffect(() => {
-		if (barcodes.length > 0 && !scanned) {
-			setScanned(true);
-			Alert.alert("QR Detectado", `Contenido: ${barcodes[0].data}`, [
-				{ text: "Ok", onPress: () => setScanned(false) },
-			]);
-		}
-	}, [barcodes]);
+		return () => {
+			subscription.remove();
+		};
+	}, []);
 
-	if (!permission) {
-		return <View />;
-	}
+	if (!permission) return null;
 
 	if (!permission.granted) {
 		return (
-			<View style={styles.container}>
-				<Text style={styles.message}>
-					Necesitamos permiso para usar la cámara
-				</Text>
+			<View style={styles.center}>
+				<Text>Necesitamos permiso para usar la cámara</Text>
 				<Button title="Permitir cámara" onPress={requestPermission} />
 			</View>
 		);
 	}
 
-	const toggleCameraFacing = () => {
-		setFacing((current) => (current === "back" ? "front" : "back"));
+	const handleQRCodeScanned = ({ data }) => {
+		if (data && !qrLock.current) {
+			qrLock.current = true;
+			Alert.alert("QR Detectado", data, [
+				{
+					text: "OK",
+					onPress: () => {
+						qrLock.current = false;
+					},
+				},
+			]);
+		}
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={StyleSheet.absoluteFillObject}>
+			{Platform.OS === "android" ? <StatusBar hidden /> : null}
+
 			<CameraView
-				style={styles.camera}
-				facing={facing}
-				onBarCodeScanned={null} // No usar acá
-				barCodeScannerSettings={{
-					barCodeTypes: ["qr"], // No es obligatorio, pero puedes dejarlo
-				}}
-			/>
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-					<Text style={styles.text}>Cambiar cámara</Text>
-				</TouchableOpacity>
-			</View>
-		</View>
+				style={StyleSheet.absoluteFillObject}
+				facing="back"
+				onBarcodeScanned={handleQRCodeScanned}
+				barCodeScannerSettings={{ barCodeTypes: ["qr"] }}
+			>
+				{/* Marco para centrar el QR */}
+				<View style={styles.overlay}>
+					<View style={styles.qrFrame} />
+				</View>
+			</CameraView>
+		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: { flex: 1, justifyContent: "center" },
-	message: { textAlign: "center", paddingBottom: 10 },
-	camera: { flex: 1 },
-	buttonContainer: {
-		position: "absolute",
-		bottom: 20,
-		alignSelf: "center",
-		flexDirection: "row",
+	center: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
-	button: {
-		backgroundColor: "#00000080",
-		padding: 10,
-		borderRadius: 8,
+	overlay: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
-	text: {
-		fontSize: 18,
-		color: "white",
-		fontWeight: "bold",
+	qrFrame: {
+		width: 250,
+		height: 250,
+		borderWidth: 4,
+		borderColor: "#00FF00",
+		borderRadius: 12,
+		backgroundColor: "transparent",
 	},
 });
