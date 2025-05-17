@@ -12,6 +12,16 @@ import {
 	Alert,
 } from "react-native";
 
+/*
+{
+para hacer el registro del qr de asistencia a la siguiente ruta : asistencia/registrar
+con la siguiente estructura:
+  "id_evento": xxx,
+  "id_usuario": "xxxx"
+}
+
+*/
+import axios from "../services/api.js";
 export default function QrScanner() {
 	const [permission, requestPermission] = useCameraPermissions();
 	const qrLock = useRef(false);
@@ -44,17 +54,40 @@ export default function QrScanner() {
 		);
 	}
 
-	const handleQRCodeScanned = ({ data }) => {
+	const handleQRCodeScanned = async ({ data }) => {
 		if (data && !qrLock.current) {
 			qrLock.current = true;
-			Alert.alert("QR Detectado", data, [
-				{
-					text: "OK",
-					onPress: () => {
-						qrLock.current = false;
-					},
-				},
-			]);
+
+			console.log("📷 QR escaneado:", data);
+
+			try {
+				const parsed = JSON.parse(data);
+
+				// Validar que tenga los campos necesarios
+				if (!parsed.eventoId || !parsed.usuarioId) {
+					throw new Error("QR inválido: faltan campos.");
+				}
+
+				// Adaptar al formato esperado por tu backend
+				const payload = {
+					id_evento: parsed.eventoId,
+					id_usuario: parsed.usuarioId,
+				};
+
+				// Enviar a la API
+				const response = await axios.post("/asistencia/registrar", payload);
+
+				Alert.alert(
+					"Asistencia registrada",
+					response.data?.mensaje || "Registro exitoso",
+					[{ text: "OK", onPress: () => (qrLock.current = false) }]
+				);
+			} catch (error) {
+				console.error("❌ Error escaneando QR:", error);
+				Alert.alert("Error", error.message || "Error al registrar asistencia", [
+					{ text: "OK", onPress: () => (qrLock.current = false) },
+				]);
+			}
 		}
 	};
 
