@@ -22,7 +22,11 @@ con la siguiente estructura:
 
 */
 import axios from "../services/api.js";
+import { useIsFocused } from "@react-navigation/native";
+
 export default function QrScanner() {
+	const isFocused = useIsFocused();
+
 	const [permission, requestPermission] = useCameraPermissions();
 	const qrLock = useRef(false);
 	const appState = useRef(AppState.currentState);
@@ -95,17 +99,18 @@ export default function QrScanner() {
 		<SafeAreaView style={StyleSheet.absoluteFillObject}>
 			{Platform.OS === "android" ? <StatusBar hidden /> : null}
 
-			<CameraView
-				style={StyleSheet.absoluteFillObject}
-				facing="back"
-				onBarcodeScanned={handleQRCodeScanned}
-				barCodeScannerSettings={{ barCodeTypes: ["qr"] }}
-			>
-				{/* Marco para centrar el QR */}
-				<View style={styles.overlay}>
-					<View style={styles.qrFrame} />
-				</View>
-			</CameraView>
+			{isFocused && (
+				<CameraView
+					style={StyleSheet.absoluteFillObject}
+					facing="back"
+					onBarcodeScanned={handleQRCodeScanned}
+					barCodeScannerSettings={{ barCodeTypes: ["qr"] }}
+				>
+					<View style={styles.overlay}>
+						<View style={styles.qrFrame} />
+					</View>
+				</CameraView>
+			)}
 		</SafeAreaView>
 	);
 }

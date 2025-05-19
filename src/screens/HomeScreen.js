@@ -1,4 +1,4 @@
-//src/screens/HomeScreen.js
+// src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import {
 	View,
@@ -10,9 +10,12 @@ import {
 	ActivityIndicator,
 	Linking,
 } from "react-native";
-import axios from "../services/api.js"; // Asegúrate de tener esto configurado como en la web
+import axios from "../services/api.js";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
+	const navigation = useNavigation();
+
 	const [eventos, setEventos] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [pagina, setPagina] = useState(1);
@@ -23,7 +26,6 @@ export default function HomeScreen() {
 				const response = await axios.get("/evento/mostrarPaginas", {
 					params: { page: pagina, limit: 6 },
 				});
-				//console.log("Eventos:", response.data.eventos);
 				const eventosProcesados = response.data.eventos.map((evento) => ({
 					...evento,
 					imagenes: evento.imagenes
@@ -66,7 +68,13 @@ export default function HomeScreen() {
 					<ActivityIndicator size="large" color="#000" />
 				) : (
 					eventos.map((evento) => (
-						<View key={evento.id_evento} style={styles.eventCard}>
+						<TouchableOpacity
+							key={evento.id_evento}
+							style={styles.eventCard}
+							onPress={() =>
+								navigation.navigate("EventoInfo", { id: evento.id_evento })
+							}
+						>
 							<Image
 								source={{
 									uri: evento.imagenes[0] || "https://via.placeholder.com/150",
@@ -86,7 +94,7 @@ export default function HomeScreen() {
 									<Text style={styles.link}>Ver en Google Maps</Text>
 								</TouchableOpacity>
 							</View>
-						</View>
+						</TouchableOpacity>
 					))
 				)}
 			</View>

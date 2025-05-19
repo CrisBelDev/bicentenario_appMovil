@@ -20,41 +20,45 @@ const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 // Menú lateral
-const DrawerNavigator = () => (
-	<Drawer.Navigator initialRouteName="Home">
-		<Drawer.Screen
-			name="Home"
-			component={HomeScreen}
-			options={{
-				title: "Inicio",
-				headerRight: () => <NotificationBell />,
-			}}
-		/>
-		<Drawer.Screen
-			name="Eventos"
-			component={EventosScreen}
-			options={{
-				title: "Eventos",
-				headerRight: () => <NotificationBell />,
-			}}
-		/>
+const DrawerNavigator = () => {
+	const { user } = useContext(AuthContext); // ← aquí accedemos al contexto
 
-		<Drawer.Screen
-			name="Cerrar Sesión"
-			component={LogoutScreen}
-			options={{ headerShown: false }}
-		/>
+	return (
+		<Drawer.Navigator initialRouteName="Home">
+			<Drawer.Screen
+				name="Home"
+				component={HomeScreen}
+				options={{
+					title: "Inicio",
+					headerRight: () => <NotificationBell />,
+				}}
+			/>
+			<Drawer.Screen
+				name="Eventos"
+				component={EventosScreen}
+				options={{
+					title: "Eventos",
+					headerRight: () => <NotificationBell />,
+				}}
+			/>
+			<Drawer.Screen
+				name="Cerrar Sesión"
+				component={LogoutScreen}
+				options={{ headerShown: false }}
+			/>
 
-		<Drawer.Screen
-			name="Escanear QR"
-			//component={LogoutScreen}
-			component={RegistroQrScreen}
-			options={{
-				title: "Escanear QR",
-			}}
-		/>
-	</Drawer.Navigator>
-);
+			{user.rol && (
+				<Drawer.Screen
+					name="Escanear QR"
+					component={RegistroQrScreen}
+					options={{
+						title: "Escanear QR",
+					}}
+				/>
+			)}
+		</Drawer.Navigator>
+	);
+};
 
 // Usuarios autenticados
 const AuthenticatedNavigator = () => (
